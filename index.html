@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>אישור הגעה - בר המצווה של עמית יערי</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#f4f1ea,#eef1f7);font-family:'Assistant',Arial,sans-serif;padding:24px}
+.wrap{width:100%;max-width:480px}
+.card{background:#fff;border-radius:20px;box-shadow:0 4px 32px rgba(0,0,0,.10);padding:28px 26px;direction:rtl}
+.header{text-align:center;margin-bottom:22px}
+.header .star{font-size:34px;margin-bottom:6px}
+.header h1{font-size:22px;font-weight:800;color:#1b2a4a;line-height:1.4}
+.header .sub{font-size:14px;color:#6b7280;margin-top:6px;line-height:1.6}
+label{display:block;font-size:14px;font-weight:600;color:#333;margin-bottom:6px}
+.field{margin-bottom:18px}
+input[type="text"]{width:100%;padding:12px 14px;border:1.5px solid #ddd;border-radius:12px;font-size:15px;font-family:inherit;direction:rtl;transition:border-color .15s}
+input[type="text"]:focus{outline:none;border-color:#3b5bdb}
+.toggle-row{display:flex;gap:10px}
+.toggle-btn{flex:1;padding:12px;border-radius:12px;border:1.5px solid #ddd;background:#fafafa;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;transition:.15s}
+.toggle-btn.yes.sel{background:#e7f6ec;border-color:#2f9e52;color:#1e7a3b}
+.toggle-btn.no.sel{background:#fdecec;border-color:#d64545;color:#b03434}
+.counters{display:none;margin-top:6px}
+.counters.show{display:block}
+.counter-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;background:#f7f8fa;border-radius:12px;padding:10px 14px}
+.counter-row .lbl{font-size:14px;font-weight:600;color:#333}
+.stepper{display:flex;align-items:center;gap:12px}
+.stepper button{width:32px;height:32px;border-radius:50%;border:none;background:#3b5bdb;color:#fff;font-size:18px;font-weight:700;cursor:pointer;line-height:1}
+.stepper button:disabled{background:#c3cbe0;cursor:not-allowed}
+.stepper .val{min-width:22px;text-align:center;font-size:16px;font-weight:700}
+.err{color:#b03434;font-size:13px;margin-bottom:12px;display:none}
+.submit-btn{width:100%;padding:14px;background:#3b5bdb;color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:800;font-family:inherit;cursor:pointer;transition:opacity .15s}
+.submit-btn:disabled{opacity:.6;cursor:not-allowed}
+.success{display:none;text-align:center;padding:20px 4px}
+.success .ico{font-size:52px;margin-bottom:10px}
+.success h2{font-size:20px;font-weight:800;color:#1b2a4a;margin-bottom:8px}
+.success p{font-size:14px;color:#555;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card" id="formCard">
+    <div class="header">
+      <div class="star">✨</div>
+      <h1>בר המצווה של עמית יערי</h1>
+      <div class="sub">30/07/2026 &bull; 11:00 &bull; יקב מונד, מושב משמרת<br/>נשמח לראותכם! אנא אשרו הגעה</div>
+    </div>
+
+    <form id="rsvpForm">
+      <div class="field">
+        <label for="firstName">שם פרטי</label>
+        <input type="text" id="firstName" autocomplete="given-name" required/>
+      </div>
+      <div class="field">
+        <label for="lastName">שם משפחה</label>
+        <input type="text" id="lastName" autocomplete="family-name" required/>
+      </div>
+
+      <div class="field">
+        <label>האם תגיעו?</label>
+        <div class="toggle-row">
+          <button type="button" class="toggle-btn yes" id="btnYes">מגיעים ✓</button>
+          <button type="button" class="toggle-btn no" id="btnNo">לא מגיעים</button>
+        </div>
+      </div>
+
+      <div class="counters" id="counters">
+        <div class="counter-row">
+          <span class="lbl">כמות מבוגרים</span>
+          <div class="stepper">
+            <button type="button" id="adultsMinus">−</button>
+            <span class="val" id="adultsVal">1</span>
+            <button type="button" id="adultsPlus">+</button>
+          </div>
+        </div>
+        <div class="counter-row">
+          <span class="lbl">כמות ילדים</span>
+          <div class="stepper">
+            <button type="button" id="childrenMinus">−</button>
+            <span class="val" id="childrenVal">0</span>
+            <button type="button" id="childrenPlus">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="err" id="errMsg"></div>
+      <button type="submit" class="submit-btn" id="submitBtn">שליחת אישור</button>
+    </form>
+  </div>
+
+  <div class="card success" id="successCard">
+    <div class="ico" id="successIco">🎉</div>
+    <h2 id="successTitle">תודה על האישור!</h2>
+    <p id="successBody">נשמח לחגוג יחד איתכם.</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  // TODO: הדביקו כאן את כתובת ה-Web App שקיבלתם מ-Google Apps Script
+  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyDU7tWalF0Ar8PI5Xo0MxehUrncjw75i3QORxWm_FoiWzW-dFsjIRh1K9ugEx19YOTJA/exec';
+
+  var attending = null; // true / false
+  var adults = 1, children = 0;
+
+  var btnYes = document.getElementById('btnYes');
+  var btnNo = document.getElementById('btnNo');
+  var counters = document.getElementById('counters');
+  var adultsVal = document.getElementById('adultsVal');
+  var childrenVal = document.getElementById('childrenVal');
+  var errMsg = document.getElementById('errMsg');
+  var form = document.getElementById('rsvpForm');
+  var submitBtn = document.getElementById('submitBtn');
+
+  function selectAttending(val){
+    attending = val;
+    btnYes.classList.toggle('sel', val === true);
+    btnNo.classList.toggle('sel', val === false);
+    counters.classList.toggle('show', val === true);
+  }
+
+  btnYes.addEventListener('click', function(){ selectAttending(true); });
+  btnNo.addEventListener('click', function(){ selectAttending(false); });
+
+  function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
+  document.getElementById('adultsPlus').addEventListener('click', function(){
+    adults = clamp(adults + 1, 1, 20); adultsVal.textContent = adults;
+  });
+  document.getElementById('adultsMinus').addEventListener('click', function(){
+    adults = clamp(adults - 1, 1, 20); adultsVal.textContent = adults;
+  });
+  document.getElementById('childrenPlus').addEventListener('click', function(){
+    children = clamp(children + 1, 0, 20); childrenVal.textContent = children;
+  });
+  document.getElementById('childrenMinus').addEventListener('click', function(){
+    children = clamp(children - 1, 0, 20); childrenVal.textContent = children;
+  });
+
+  function showError(msg){
+    errMsg.textContent = msg;
+    errMsg.style.display = 'block';
+  }
+  function clearError(){
+    errMsg.style.display = 'none';
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    clearError();
+
+    var firstName = document.getElementById('firstName').value.trim();
+    var lastName = document.getElementById('lastName').value.trim();
+
+    if (!firstName || !lastName){
+      showError('נא למלא שם פרטי ושם משפחה');
+      return;
+    }
+    if (attending === null){
+      showError('נא לבחור אם מגיעים');
+      return;
+    }
+
+    var payload = {
+      firstName: firstName,
+      lastName: lastName,
+      attending: attending ? 'כן' : 'לא',
+      adults: attending ? adults : 0,
+      children: attending ? children : 0
+    };
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'שולח...';
+
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    })
+    .then(function(res){ return res.json(); })
+    .then(function(data){
+      if (data && data.result === 'success'){
+        showSuccess(payload.attending === 'כן');
+      } else {
+        throw new Error('bad response');
+      }
+    })
+    .catch(function(){
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'שליחת אישור';
+      showError('משהו השתבש בשליחה. נסו שוב, או צרו קשר ישירות עם המארגנים.');
+    });
+  });
+
+  function showSuccess(isComing){
+    document.getElementById('formCard').style.display = 'none';
+    var successCard = document.getElementById('successCard');
+    successCard.style.display = 'block';
+    if (isComing){
+      document.getElementById('successIco').textContent = '🎉';
+      document.getElementById('successTitle').textContent = 'תודה על האישור!';
+      document.getElementById('successBody').textContent = 'נשמח לחגוג יחד איתכם!';
+    } else {
+      document.getElementById('successIco').textContent = '🙏';
+      document.getElementById('successTitle').textContent = 'תודה על התשובה';
+      document.getElementById('successBody').textContent = 'חבל שלא תוכלו להגיע, נתראה בהזדמנות הבאה!';
+    }
+  }
+})();
+</script>
+</body>
+</html>
