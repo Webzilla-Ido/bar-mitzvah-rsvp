@@ -73,7 +73,7 @@ input[type="text"]:focus{outline:none;border-color:#3b5bdb}
           <span class="lbl">כמות מבוגרים</span>
           <div class="stepper">
             <button type="button" id="adultsMinus">−</button>
-            <span class="val" id="adultsVal">1</span>
+            <span class="val" id="adultsVal">0</span>
             <button type="button" id="adultsPlus">+</button>
           </div>
         </div>
@@ -105,7 +105,7 @@ input[type="text"]:focus{outline:none;border-color:#3b5bdb}
   var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyDU7tWalF0Ar8PI5Xo0MxehUrncjw75i3QORxWm_FoiWzW-dFsjIRh1K9ugEx19YOTJA/exec';
 
   var attending = null; // true / false
-  var adults = 1, children = 0;
+  var adults = 0, children = 0;
 
   var btnYes = document.getElementById('btnYes');
   var btnNo = document.getElementById('btnNo');
@@ -129,10 +129,10 @@ input[type="text"]:focus{outline:none;border-color:#3b5bdb}
   function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
 
   document.getElementById('adultsPlus').addEventListener('click', function(){
-    adults = clamp(adults + 1, 1, 20); adultsVal.textContent = adults;
+    adults = clamp(adults + 1, 0, 20); adultsVal.textContent = adults;
   });
   document.getElementById('adultsMinus').addEventListener('click', function(){
-    adults = clamp(adults - 1, 1, 20); adultsVal.textContent = adults;
+    adults = clamp(adults - 1, 0, 20); adultsVal.textContent = adults;
   });
   document.getElementById('childrenPlus').addEventListener('click', function(){
     children = clamp(children + 1, 0, 20); childrenVal.textContent = children;
@@ -162,6 +162,10 @@ input[type="text"]:focus{outline:none;border-color:#3b5bdb}
     }
     if (attending === null){
       showError('נא לבחור אם מגיעים');
+      return;
+    }
+    if (attending === true && adults + children < 1){
+      showError('נא לציין כמות מבוגרים ו/או ילדים');
       return;
     }
 
